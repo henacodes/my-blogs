@@ -169,7 +169,6 @@ export type ImageOptions = {
    */
   fileData: QuartzPluginData
 }
-
 // This is the default template for generated social image.
 export const defaultImage: SocialImageOptions["imageStructure"] = ({
   cfg,
@@ -179,7 +178,6 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
   fileData,
   iconBase64,
 }) => {
-  const { colorScheme } = userOpts
   const fontBreakPoint = 32
   const useSmallerFont = title.length > fontBreakPoint
 
@@ -198,6 +196,16 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
   const bodyFont = getFontSpecificationName(cfg.theme.typography.body)
   const headerFont = getFontSpecificationName(cfg.theme.typography.header)
 
+  // Custom Colors extracted from your theme
+  const colors = {
+    bg: "#1c1715", // Deep warm dark brown/black
+    primaryOrbs: "#e87a3e", // The brand orange for the glowing effect
+    siteName: "#e87a3e", // Deep orange
+    title: "#ff9d5c", // Brighter orange for the main heading
+    text: "#d6cdc4", // Warm off-white for description readability
+    meta: "#a19589", // Dimmer warm gray for dates/times
+  }
+
   return (
     <div
       style={{
@@ -205,115 +213,177 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
         flexDirection: "column",
         height: "100%",
         width: "100%",
-        backgroundColor: cfg.theme.colors[colorScheme].light,
-        padding: "2.5rem",
+        backgroundColor: colors.bg,
         fontFamily: bodyFont,
+        position: "relative",
+        overflow: "hidden", // Keeps the glowing orbs from spilling out
       }}
     >
-      {/* Header Section */}
+      {/* BACKGROUND: Fuzzy Orange Blurred Balls */}
+      {/* We use SVG radial gradients because Satori doesn't support CSS blurs */}
       <div
         style={{
           display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          marginBottom: "0.5rem",
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          zIndex: 0,
         }}
       >
-        {iconBase64 && (
-          <img
-            src={iconBase64}
-            width={56}
-            height={56}
-            style={{
-              borderRadius: "50%",
-            }}
-          />
-        )}
-        <div
-          style={{
-            display: "flex",
-            fontSize: 32,
-            color: cfg.theme.colors[colorScheme].gray,
-            fontFamily: bodyFont,
-          }}
-        >
-          {cfg.baseUrl}
-        </div>
+        <svg style={{ width: "100%", height: "100%" }} viewBox="0 0 1200 630">
+          <defs>
+            {/* Top Left Orb */}
+            <radialGradient id="glow1" cx="10%" cy="10%" r="50%">
+              <stop offset="0%" stopColor={colors.primaryOrbs} stopOpacity="0.35" />
+              <stop offset="100%" stopColor={colors.primaryOrbs} stopOpacity="0" />
+            </radialGradient>
+            {/* Bottom Right Orb */}
+            <radialGradient id="glow2" cx="90%" cy="90%" r="60%">
+              <stop offset="0%" stopColor={colors.primaryOrbs} stopOpacity="0.25" />
+              <stop offset="100%" stopColor={colors.primaryOrbs} stopOpacity="0" />
+            </radialGradient>
+          </defs>
+          <rect width="100%" height="100%" fill="url(#glow1)" />
+          <rect width="100%" height="100%" fill="url(#glow2)" />
+        </svg>
       </div>
 
-      {/* Title Section */}
+      {/* CONTENT WRAPPER */}
       <div
         style={{
           display: "flex",
-          marginTop: "1rem",
-          marginBottom: "1.5rem",
+          flexDirection: "column",
+          height: "100%",
+          width: "100%",
+          padding: "3.5rem",
+          zIndex: 1, // Sit above the background SVG
         }}
       >
-        <h1
-          style={{
-            margin: 0,
-            fontSize: useSmallerFont ? 64 : 72,
-            fontFamily: headerFont,
-            fontWeight: 700,
-            color: cfg.theme.colors[colorScheme].dark,
-            lineHeight: 1.2,
-            display: "-webkit-box",
-            WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 2,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {title}
-        </h1>
-      </div>
-
-      {/* Description Section */}
-      <div
-        style={{
-          display: "flex",
-          flex: 1,
-          fontSize: 36,
-          color: cfg.theme.colors[colorScheme].darkgray,
-          lineHeight: 1.4,
-        }}
-      >
-        <p
-          style={{
-            margin: 0,
-            display: "-webkit-box",
-            WebkitBoxOrient: "vertical",
-            WebkitLineClamp: 5,
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-          }}
-        >
-          {description}
-        </p>
-      </div>
-
-      {/* Footer with Metadata */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginTop: "2rem",
-          paddingTop: "2rem",
-          borderTop: `1px solid ${cfg.theme.colors[colorScheme].lightgray}`,
-        }}
-      >
-        {/* Left side - Date and Reading Time */}
+        {/* Header Section */}
         <div
           style={{
             display: "flex",
             alignItems: "center",
-            gap: "2rem",
-            color: cfg.theme.colors[colorScheme].gray,
-            fontSize: 28,
+            gap: "1rem",
+            marginBottom: "0.5rem",
           }}
         >
-          {date && (
+          {iconBase64 && (
+            <img
+              src={iconBase64}
+              width={56}
+              height={56}
+              style={{
+                borderRadius: "50%",
+              }}
+            />
+          )}
+          <div
+            style={{
+              display: "flex",
+              fontSize: 32,
+              fontWeight: 700,
+              color: colors.siteName,
+              fontFamily: bodyFont,
+            }}
+          >
+            {cfg.baseUrl}
+          </div>
+        </div>
+
+        {/* Title Section */}
+        <div
+          style={{
+            display: "flex",
+            marginTop: "1.5rem",
+            marginBottom: "1.5rem",
+          }}
+        >
+          <h1
+            style={{
+              margin: 0,
+              fontSize: useSmallerFont ? 64 : 76,
+              fontFamily: headerFont,
+              fontWeight: 700,
+              color: colors.title,
+              lineHeight: 1.1,
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 2,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {title}
+          </h1>
+        </div>
+
+        {/* Description Section */}
+        <div
+          style={{
+            display: "flex",
+            flex: 1,
+            fontSize: 36,
+            color: colors.text,
+            lineHeight: 1.4,
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              display: "-webkit-box",
+              WebkitBoxOrient: "vertical",
+              WebkitLineClamp: 4,
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {description}
+          </p>
+        </div>
+
+        {/* Footer with Metadata */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            marginTop: "2rem",
+            paddingTop: "2rem",
+            borderTop: `1px solid rgba(232, 122, 62, 0.2)`, // Faint orange border
+          }}
+        >
+          {/* Left side - Date and Reading Time */}
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "2rem",
+              color: colors.meta,
+              fontSize: 28,
+            }}
+          >
+            {date && (
+              <div style={{ display: "flex", alignItems: "center" }}>
+                <svg
+                  style={{ marginRight: "0.5rem" }}
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                  <line x1="3" y1="10" x2="21" y2="10"></line>
+                </svg>
+                {date}
+              </div>
+            )}
             <div style={{ display: "flex", alignItems: "center" }}>
               <svg
                 style={{ marginRight: "0.5rem" }}
@@ -322,55 +392,41 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
+                strokeWidth="2"
               >
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                <line x1="16" y1="2" x2="16" y2="6"></line>
-                <line x1="8" y1="2" x2="8" y2="6"></line>
-                <line x1="3" y1="10" x2="21" y2="10"></line>
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
-              {date}
+              {readingTimeText}
             </div>
-          )}
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <svg
-              style={{ marginRight: "0.5rem" }}
-              width="28"
-              height="28"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-            >
-              <circle cx="12" cy="12" r="10"></circle>
-              <polyline points="12 6 12 12 16 14"></polyline>
-            </svg>
-            {readingTimeText}
           </div>
-        </div>
 
-        {/* Right side - Tags */}
-        <div
-          style={{
-            display: "flex",
-            gap: "0.5rem",
-            flexWrap: "wrap",
-            justifyContent: "flex-end",
-            maxWidth: "60%",
-          }}
-        >
-          {tags.slice(0, 3).map((tag: string) => (
-            <div
-              style={{
-                display: "flex",
-                padding: "0.5rem 1rem",
-                backgroundColor: cfg.theme.colors[colorScheme].highlight,
-                color: cfg.theme.colors[colorScheme].secondary,
-                borderRadius: "10px",
-                fontSize: 24,
-              }}
-            >
-              #{tag}
-            </div>
-          ))}
+          {/* Right side - Tags */}
+          <div
+            style={{
+              display: "flex",
+              gap: "0.75rem",
+              flexWrap: "wrap",
+              justifyContent: "flex-end",
+              maxWidth: "60%",
+            }}
+          >
+            {tags.slice(0, 3).map((tag: string) => (
+              <div
+                style={{
+                  display: "flex",
+                  padding: "0.5rem 1.25rem",
+                  backgroundColor: "rgba(232, 122, 62, 0.1)", // Very transparent orange
+                  color: colors.title,
+                  border: `1px solid rgba(232, 122, 62, 0.3)`,
+                  borderRadius: "999px", // Pill shape
+                  fontSize: 24,
+                }}
+              >
+                #{tag}
+              </div>
+            ))}
+          </div>
         </div>
       </div>
     </div>

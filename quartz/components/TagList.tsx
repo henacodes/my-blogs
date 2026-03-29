@@ -46,10 +46,13 @@ TagList.css = `
 }
 
 a.internal.tag-link {
-  border-radius: 8px;
-  background-color: var(--highlight);
-  padding: 0.2rem 0.4rem;
-  margin: 0 0.1rem;
+  border-radius: 9999px;
+  background-color: rgba(232, 122, 62, 0.08);
+  color: #ff9d5c;
+  border: 1px solid rgba(232, 122, 62, 0.3);
+  padding: 0.35rem 0.75rem;
+  margin: 0 0.2rem;
+  font-weight: 600;
 }
 `
 

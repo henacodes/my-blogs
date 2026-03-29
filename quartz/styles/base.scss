@@ -18,9 +18,47 @@ html {
 body {
   margin: 0;
   box-sizing: border-box;
-  background-color: var(--light);
+  position: relative;
+  min-height: 100vh;
+  background-color: #1c1715; /* Base Background */
   font-family: var(--bodyFont);
-  color: var(--darkgray);
+  color: #d6cdc4; /* Body Text */
+}
+/* We use a separate background container instead of ::before 
+   to avoid z-index conflicts with Quartz's internal layout.
+*/
+.backdrops {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: -1; // Standard browsers support this fine
+  overflow: hidden;
+
+  .orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(120px);
+    background: #e87a3e;
+    opacity: 0.15;
+  }
+
+  .orb-1 {
+    width: 600px;
+    height: 600px;
+    top: -150px;
+    left: -150px;
+  }
+
+  .orb-2 {
+    width: 500px;
+    height: 500px;
+    bottom: -100px;
+    right: -100px;
+    opacity: 0.1;
+  }
 }
 
 .text-highlight {
@@ -162,20 +200,10 @@ a {
 .page {
   max-width: calc(#{map.get($breakpoints, desktop)} + 300px);
   margin: 0 auto;
+  padding: 3rem 1.5rem;
   & article {
     & > h1 {
       font-size: 2rem;
-    }
-
-    & li:has(> input[type="checkbox"]) {
-      list-style-type: none;
-      padding-left: 0;
-    }
-
-    & li:has(> input[type="checkbox"]:checked) {
-      text-decoration: line-through;
-      text-decoration-color: var(--gray);
-      color: var(--gray);
     }
 
     & li > * {
@@ -629,7 +657,7 @@ iframe.pdf {
   border-radius: 5px;
 }
 
-.navigation-progress {
+navigation-progress {
   position: fixed;
   top: 0;
   left: 0;
