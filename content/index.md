@@ -1,6 +1,5 @@
 ---
-title: Welcome to Quartz
+title: The Wandering Soul
 ---
 
-This is a blank Quartz installation.
-See the [documentation](https://quartz.jzhao.xyz) for how to get started.
+Comtemplating religion and its shenanigans
