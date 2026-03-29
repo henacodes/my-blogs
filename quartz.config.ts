@@ -11,7 +11,7 @@ const config: QuartzConfig = {
       provider: "plausible",
     },
     locale: "en-US",
-    baseUrl: "blog.kirakos.dev",
+    baseUrl: "blog.kirakos.tech",
     ignorePatterns: ["private", "templates", ".obsidian"],
     defaultDateType: "modified",
     theme: {
