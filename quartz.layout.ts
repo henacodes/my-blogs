@@ -35,7 +35,23 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      sortFn: (a, b) => {
+        // 1. Maintain folder structure: Folders go first
+        if (a.isFolder && !b.isFolder) return -1
+        if (!a.isFolder && b.isFolder) return 1
+
+        // 2. Extract file names from the slug (data property)
+        const nameA = a.data?.slug?.split("/").pop() ?? a.displayName
+        const nameB = b.data?.slug?.split("/").pop() ?? b.displayName
+
+        // 3. Compare numerically
+        return nameA.localeCompare(nameB, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        })
+      },
+    }),
   ],
   right: [
     Component.Graph(),
