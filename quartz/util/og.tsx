@@ -170,6 +170,8 @@ export type ImageOptions = {
   fileData: QuartzPluginData
 }
 // This is the default template for generated social image.
+
+// This is the default template for generated social image.
 export const defaultImage: SocialImageOptions["imageStructure"] = ({
   cfg,
   userOpts,
@@ -191,19 +193,22 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
     minutes: Math.ceil(minutes),
   })
 
-  // Get tags if available
+  // Get tags and custom frontmatter if available
   const tags = fileData.frontmatter?.tags ?? []
+  const subtitle = fileData.frontmatter?.subtitle as string | undefined
+  const author = fileData.frontmatter?.author as string | undefined
+
   const bodyFont = getFontSpecificationName(cfg.theme.typography.body)
   const headerFont = getFontSpecificationName(cfg.theme.typography.header)
 
   // Custom Colors extracted from your theme
   const colors = {
-    bg: "#1c1715", // Deep warm dark brown/black
-    primaryOrbs: "#e87a3e", // The brand orange for the glowing effect
-    siteName: "#e87a3e", // Deep orange
-    title: "#ff9d5c", // Brighter orange for the main heading
-    text: "#d6cdc4", // Warm off-white for description readability
-    meta: "#a19589", // Dimmer warm gray for dates/times
+    bg: "#1c1715",
+    primaryOrbs: "#e87a3e",
+    siteName: "#e87a3e",
+    title: "#ff9d5c",
+    text: "#d6cdc4",
+    meta: "#a19589",
   }
 
   return (
@@ -216,11 +221,10 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
         backgroundColor: colors.bg,
         fontFamily: bodyFont,
         position: "relative",
-        overflow: "hidden", // Keeps the glowing orbs from spilling out
+        overflow: "hidden",
       }}
     >
       {/* BACKGROUND: Fuzzy Orange Blurred Balls */}
-      {/* We use SVG radial gradients because Satori doesn't support CSS blurs */}
       <div
         style={{
           display: "flex",
@@ -234,12 +238,10 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
       >
         <svg style={{ width: "100%", height: "100%" }} viewBox="0 0 1200 630">
           <defs>
-            {/* Top Left Orb */}
             <radialGradient id="glow1" cx="10%" cy="10%" r="50%">
               <stop offset="0%" stopColor={colors.primaryOrbs} stopOpacity="0.35" />
               <stop offset="100%" stopColor={colors.primaryOrbs} stopOpacity="0" />
             </radialGradient>
-            {/* Bottom Right Orb */}
             <radialGradient id="glow2" cx="90%" cy="90%" r="60%">
               <stop offset="0%" stopColor={colors.primaryOrbs} stopOpacity="0.25" />
               <stop offset="100%" stopColor={colors.primaryOrbs} stopOpacity="0" />
@@ -258,7 +260,7 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
           height: "100%",
           width: "100%",
           padding: "3.5rem",
-          zIndex: 1, // Sit above the background SVG
+          zIndex: 1,
         }}
       >
         {/* Header Section */}
@@ -293,10 +295,11 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
           </div>
         </div>
 
-        {/* Title Section */}
+        {/* Title & Subtitle Section */}
         <div
           style={{
             display: "flex",
+            flexDirection: "column",
             marginTop: "1.5rem",
             marginBottom: "1.5rem",
           }}
@@ -318,6 +321,18 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
           >
             {title}
           </h1>
+          {subtitle && (
+            <p
+              style={{
+                margin: "0.75rem 0 0 0",
+                fontSize: 36,
+                color: colors.text,
+                lineHeight: 1.2,
+              }}
+            >
+              {subtitle}
+            </p>
+          )}
         </div>
 
         {/* Description Section */}
@@ -325,8 +340,8 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
           style={{
             display: "flex",
             flex: 1,
-            fontSize: 36,
-            color: colors.text,
+            fontSize: 32,
+            color: colors.meta,
             lineHeight: 1.4,
           }}
         >
@@ -335,7 +350,7 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
               margin: 0,
               display: "-webkit-box",
               WebkitBoxOrient: "vertical",
-              WebkitLineClamp: 4,
+              WebkitLineClamp: 3,
               overflow: "hidden",
               textOverflow: "ellipsis",
             }}
@@ -352,10 +367,10 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
             justifyContent: "space-between",
             marginTop: "2rem",
             paddingTop: "2rem",
-            borderTop: `1px solid rgba(232, 122, 62, 0.2)`, // Faint orange border
+            borderTop: `1px solid rgba(232, 122, 62, 0.2)`,
           }}
         >
-          {/* Left side - Date and Reading Time */}
+          {/* Left side - Author, Date and Reading Time */}
           <div
             style={{
               display: "flex",
@@ -365,6 +380,23 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
               fontSize: 28,
             }}
           >
+            {author && (
+              <div style={{ display: "flex", alignItems: "center", color: colors.title }}>
+                <svg
+                  style={{ marginRight: "0.5rem" }}
+                  width="28"
+                  height="28"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+                {author}
+              </div>
+            )}
             {date && (
               <div style={{ display: "flex", alignItems: "center" }}>
                 <svg
@@ -408,7 +440,7 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
               gap: "0.75rem",
               flexWrap: "wrap",
               justifyContent: "flex-end",
-              maxWidth: "60%",
+              maxWidth: "50%",
             }}
           >
             {tags.slice(0, 3).map((tag: string) => (
@@ -416,10 +448,10 @@ export const defaultImage: SocialImageOptions["imageStructure"] = ({
                 style={{
                   display: "flex",
                   padding: "0.5rem 1.25rem",
-                  backgroundColor: "rgba(232, 122, 62, 0.1)", // Very transparent orange
+                  backgroundColor: "rgba(232, 122, 62, 0.1)",
                   color: colors.title,
                   border: `1px solid rgba(232, 122, 62, 0.3)`,
-                  borderRadius: "999px", // Pill shape
+                  borderRadius: "999px",
                   fontSize: 24,
                 }}
               >

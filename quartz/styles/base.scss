@@ -20,45 +20,41 @@ body {
   box-sizing: border-box;
   position: relative;
   min-height: 100vh;
-  background-color: #1c1715; /* Base Background */
+  background-color: var(--light);
   font-family: var(--bodyFont);
-  color: #d6cdc4; /* Body Text */
+  color: var(--darkgray);
 }
-/* We use a separate background container instead of ::before 
-   to avoid z-index conflicts with Quartz's internal layout.
-*/
-.backdrops {
+
+body::before,
+body::after {
+  content: "";
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
   pointer-events: none;
-  z-index: -1; // Standard browsers support this fine
-  overflow: hidden;
+  border-radius: 9999px;
+  filter: blur(150px);
+  z-index: 0;
+}
 
-  .orb {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(120px);
-    background: #e87a3e;
-    opacity: 0.15;
-  }
+body::before {
+  width: 620px;
+  height: 620px;
+  left: -140px;
+  top: -120px;
+  background: radial-gradient(circle, rgba(232,122,62,0.18), rgba(232,122,62,0.04) 45%, transparent 72%);
+}
 
-  .orb-1 {
-    width: 600px;
-    height: 600px;
-    top: -150px;
-    left: -150px;
-  }
+body::after {
+  width: 680px;
+  height: 680px;
+  right: -160px;
+  bottom: -140px;
+  background: radial-gradient(circle, rgba(232,122,62,0.14), rgba(232,122,62,0.03) 45%, transparent 72%);
+}
 
-  .orb-2 {
-    width: 500px;
-    height: 500px;
-    bottom: -100px;
-    right: -100px;
-    opacity: 0.1;
-  }
+.page,
+#quartz-body {
+  position: relative;
+  z-index: 1;
 }
 
 .text-highlight {
@@ -68,7 +64,7 @@ body {
 }
 ::selection {
   background: color-mix(in srgb, var(--tertiary) 60%, rgba(255, 255, 255, 0));
-  color: var(--darkgray);
+  color: var(--dark);
 }
 
 p,
@@ -198,9 +194,9 @@ a {
 }
 
 .page {
-  max-width: calc(#{map.get($breakpoints, desktop)} + 300px);
+  max-width: calc(#{map.get($breakpoints, desktop)} + 260px);
   margin: 0 auto;
-  padding: 3rem 1.5rem;
+  padding: 2.5rem 1.25rem;
   & article {
     & > h1 {
       font-size: 2rem;
@@ -240,7 +236,7 @@ a {
     }
 
     @media all and not ($desktop) {
-      padding: 0 1rem;
+      padding: 0 0.5rem;
     }
     @media all and ($mobile) {
       margin: 0 auto;
@@ -254,6 +250,14 @@ a {
       display: flex;
       height: 100vh;
       position: sticky;
+
+      @media all and ($mobile) {
+        position: relative;
+        height: auto;
+        min-height: unset;
+        width: 100%;
+        padding: 1rem 0 0;
+      }
     }
 
     & .sidebar.left {
@@ -269,6 +273,7 @@ a {
         flex-direction: row;
         padding: 0;
         padding-top: 2rem;
+        width: 100%;
       }
     }
 
@@ -286,6 +291,7 @@ a {
         width: 100%;
         flex-direction: row;
         padding: 0;
+        gap: 0.75rem;
         & > * {
           flex: 1;
           max-height: 24rem;
@@ -302,10 +308,26 @@ a {
 
     & .page-header {
       grid-area: grid-header;
-      margin: $topSpacing 0 0 0;
+      margin: 0 0 1.5rem 0;
+      padding: 0;
+      background: transparent;
+      border: none;
+      box-shadow: none;
       @media all and ($mobile) {
-        margin-top: 0;
-        padding: 0;
+        margin-bottom: 1rem;
+      }
+
+      h1.article-title {
+        color: var(--tertiary);
+        font-size: clamp(1.85rem, 3vw, 2.75rem);
+        line-height: 1.12;
+        letter-spacing: -0.02em;
+        margin: 0;
+      }
+
+      .content-meta,
+      .content-meta * {
+        color: var(--gray);
       }
     }
 
@@ -339,13 +361,13 @@ a {
 
 .footnotes {
   margin-top: 2rem;
-  border-top: 1px solid var(--lightgray);
+  border-top: 1px solid rgba(232,122,62,0.2);
 }
 
 input[type="checkbox"] {
   transform: translateY(2px);
   color: var(--secondary);
-  border: 1px solid var(--lightgray);
+  border: 1px solid rgba(232,122,62,0.2);
   border-radius: 3px;
   background-color: var(--light);
   position: relative;
@@ -376,7 +398,7 @@ input[type="checkbox"] {
 
 blockquote {
   margin: 1rem 0;
-  border-left: 3px solid var(--secondary);
+  border-left: 3px solid rgba(232,122,62,0.35);
   padding-left: 1rem;
   transition: border-color 0.2s ease;
 }
@@ -460,7 +482,7 @@ figure[data-rehype-pretty-code-figure] {
     font-family: var(--codeFont);
     font-size: 0.9rem;
     padding: 0.1rem 0.5rem;
-    border: 1px solid var(--lightgray);
+    border: 1px solid rgba(232,122,62,0.2);
     width: fit-content;
     border-radius: 5px;
     margin-bottom: -0.5rem;
@@ -477,7 +499,7 @@ pre {
   padding: 0 0.5rem;
   border-radius: 5px;
   overflow-x: auto;
-  border: 1px solid var(--lightgray);
+  border: 1px solid rgba(232,122,62,0.2);
   position: relative;
 
   &:has(> code.mermaid) {
@@ -495,7 +517,7 @@ pre {
     overflow-x: auto;
 
     & [data-highlighted-chars] {
-      background-color: var(--highlight);
+      background-color: rgba(232,122,62,0.12);
       border-radius: 5px;
     }
 
@@ -505,7 +527,7 @@ pre {
       border-left: 3px solid transparent;
 
       &[data-highlighted-line] {
-        background-color: var(--highlight);
+        background-color: rgba(232,122,62,0.12);
         border-left: 3px solid var(--secondary);
       }
 
@@ -516,7 +538,7 @@ pre {
         margin-right: 1rem;
         display: inline-block;
         text-align: right;
-        color: rgba(115, 138, 148, 0.6);
+        color: var(--gray);
       }
     }
 
@@ -536,7 +558,7 @@ code {
   font-family: var(--codeFont);
   border-radius: 5px;
   padding: 0.1rem 0.2rem;
-  background: var(--lightgray);
+  background: rgba(232,122,62,0.08);
 }
 
 tbody,
@@ -567,7 +589,7 @@ p {
 th {
   text-align: left;
   padding: 0.4rem 0.7rem;
-  border-bottom: 2px solid var(--gray);
+  border-bottom: 2px solid rgba(232,122,62,0.2);
 }
 
 td {
@@ -575,7 +597,7 @@ td {
 }
 
 tr {
-  border-bottom: 1px solid var(--lightgray);
+  border-bottom: 1px solid rgba(232,122,62,0.2);
   &:last-child {
     border-bottom: none;
   }
@@ -598,7 +620,7 @@ hr {
   margin: 2rem auto;
   height: 1px;
   border: none;
-  background-color: var(--lightgray);
+  background-color: rgba(232,122,62,0.2);
 }
 
 audio,
